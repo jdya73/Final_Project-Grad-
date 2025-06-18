@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iot-metrics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iot-metrics
+  template:
+    metadata:
+      labels:
+        app: iot-metrics
+    spec:
+      containers:
+      - name: iot-metrics
+        image: jaydeep70/iot-metrics:latest
+        ports:
+        - containerPort: 5000
+        - containerPort: 8000  # Prometheus metrics
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iot-metrics-service
+spec:
+  selector:
+    app: iot-metrics
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 5000
+    - name: metrics
+      protocol: TCP
+      port: 8000
+      targetPort: 8000
